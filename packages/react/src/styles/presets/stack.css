@@ -1,0 +1,223 @@
+/* Dimensional Stack – 3D deck */
+
+.um-stack__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: calc(var(--um-gap) * 1.5);
+}
+@container (max-width: 560px) {
+  .um-stack__layout {
+    grid-template-columns: 1fr;
+  }
+}
+.um-stack__deck {
+  --um-zone-h: 300px;
+  position: relative;
+  perspective: 900px;
+  perspective-origin: 50% -20%;
+  border-radius: calc(var(--um-radius) * 1.2);
+  background: radial-gradient(ellipse at 50% 100%, var(--um-tint-strong), transparent 70%), var(--um-surface-2);
+  border: 1px solid var(--um-border);
+  cursor: default;
+  transition: border-color var(--um-d), background var(--um-d);
+}
+.um-stack__deck[data-count='0'] {
+  cursor: pointer;
+}
+.um-stack__deck[data-um-drag='accept'] {
+  border-color: var(--um-accent);
+  background: radial-gradient(ellipse at 50% 100%, var(--um-accent-soft), transparent 70%), var(--um-tint);
+}
+.um-stack__deck[data-um-drag='reject'] {
+  border-color: var(--um-danger);
+}
+
+.um-stack__card,
+.um-stack__ghost,
+.um-stack__placeholder {
+  --d: 0;
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  width: min(300px, 82%);
+  translate: -50% 0;
+  border-radius: 16px;
+  transform-origin: 50% 100%;
+  transform: translateY(calc(var(--d) * -16px)) translateZ(calc(var(--d) * -40px)) rotateX(calc(var(--d) * 4deg));
+  transition: transform calc(var(--um-time) * 560ms) var(--um-spring), opacity var(--um-d), filter var(--um-d);
+  z-index: calc(10 - var(--d));
+}
+.um-stack__card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 12px;
+  padding: 14px;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: 0 calc(10px - var(--d) * 2px) 30px -14px rgb(20 20 50 / 0.35);
+  filter: brightness(calc(1 - var(--d) * 0.04));
+  animation: um-stack-in calc(var(--um-time) * 620ms) var(--um-spring) both;
+}
+.um-stack__card > .um-progress,
+.um-stack__card > .um-stack__foot {
+  grid-column: 1 / -1;
+}
+.um-stack__card:not([data-front]) > :not(.um-thumb, .um-ficon, .um-stack__meta) {
+  visibility: hidden;
+}
+@keyframes um-stack-in {
+  from { opacity: 0; transform: translateY(-120px) rotateX(-30deg) scale(0.9); }
+}
+.um-stack__card[data-status='error'] {
+  border-color: color-mix(in oklab, var(--um-danger) 50%, var(--um-border));
+  animation: um-shake calc(var(--um-time) * 480ms) var(--um-ease);
+}
+.um-stack__card[data-exit='land'] {
+  animation: um-stack-land calc(var(--um-time) * 700ms) var(--um-ease) forwards;
+  z-index: 20;
+}
+.um-stack__card[data-exit='discard'] {
+  animation: um-stack-discard calc(var(--um-time) * 500ms) var(--um-ease) forwards;
+}
+@keyframes um-stack-land {
+  0% { transform: none; opacity: 1; }
+  40% { transform: translate(40px, -40px) rotate(8deg) scale(1.02); opacity: 1; }
+  100% { transform: translate(140%, -10px) rotate(18deg) scale(0.4); opacity: 0; }
+}
+@keyframes um-stack-discard {
+  to { transform: translateY(60px) rotate(-6deg) scale(0.9); opacity: 0; }
+}
+
+/* Fan out the deck on hover/focus */
+.um-stack__deck:hover .um-stack__card:not([data-front]):not([data-exit]),
+.um-stack__deck:focus-within .um-stack__card:not([data-front]):not([data-exit]) {
+  transform: translateY(calc(var(--d) * -26px)) translateX(calc(var(--d) * 14px * var(--um-intensity))) rotate(calc(var(--d) * 4deg * var(--um-intensity))) translateZ(calc(var(--d) * -30px));
+}
+
+.um-stack__meta {
+  display: grid;
+  min-width: 0;
+}
+.um-stack__name {
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.um-stack__size {
+  color: var(--um-muted);
+  font-size: 0.85em;
+}
+.um-stack__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.um-stack__empty {
+  position: absolute;
+  inset: 0;
+}
+.um-stack__ghost {
+  height: 120px;
+  border: 1.5px dashed color-mix(in oklab, var(--um-muted) 30%, transparent);
+  background: color-mix(in oklab, var(--um-surface) 60%, transparent);
+}
+.um-stack__placeholder {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  min-height: 150px;
+  padding: 16px;
+  text-align: center;
+  background: var(--um-surface);
+  border: 1.5px dashed color-mix(in oklab, var(--um-accent) 45%, transparent);
+  color: var(--um-muted);
+}
+.um-stack__placeholder svg {
+  color: var(--um-accent);
+}
+.um-stack__placeholder strong {
+  color: var(--um-text);
+}
+.um-stack__deck[data-um-drag='accept'] .um-stack__ghost {
+  transform: translateY(calc(var(--d) * -28px)) rotate(calc(var(--d) * -5deg));
+}
+.um-stack__deck[data-um-drag='accept'] .um-stack__placeholder {
+  transform: translateY(-10px) scale(1.04);
+  border-color: var(--um-accent);
+}
+.um-stack__more {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+}
+.um-stack__add {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.um-stack__tray {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px;
+  border-radius: calc(var(--um-radius) * 1.2);
+  border: 1px solid var(--um-border);
+  background: var(--um-surface);
+  min-height: 120px;
+}
+.um-stack__tray-title {
+  font-size: 0.85em;
+  color: var(--um-muted);
+}
+.um-stack__tray-title strong {
+  color: var(--um-success);
+}
+.um-stack__tray-empty {
+  color: var(--um-muted);
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+.um-stack__done {
+  gap: 6px;
+}
+.um-stack__done .um-list__item {
+  animation: um-stack-tray-in calc(var(--um-time) * 600ms) var(--um-spring) both;
+}
+@keyframes um-stack-tray-in {
+  from { opacity: 0; transform: translateX(-60px) rotate(-10deg) scale(0.8); }
+}
+.um-stack__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 5px;
+  border-radius: 10px;
+  background: var(--um-surface-2);
+  font-size: 0.85em;
+}
+.um-stack__chip .um-ficon {
+  scale: 0.8;
+}
+.um-stack__chip-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.um-stack__toggle {
+  margin-left: auto;
+}

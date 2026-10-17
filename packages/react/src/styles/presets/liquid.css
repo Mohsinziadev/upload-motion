@@ -1,0 +1,170 @@
+/* Liquid Fill – the zone is a vessel */
+
+.um-liquid {
+  display: grid;
+  gap: var(--um-gap);
+}
+.um-liquid__vessel {
+  --um-zone-h: 240px;
+  --um-level: 0.1;
+  --um-liquid: var(--um-accent);
+  --um-liquid-2: var(--um-accent-2);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--um-surface);
+  border: 1.5px solid var(--um-border);
+  box-shadow: inset 0 2px 12px rgb(20 20 50 / 0.06), var(--um-shadow);
+  border-radius: calc(var(--um-radius) * 1.4);
+  transition: border-color var(--um-d);
+}
+.um-liquid__vessel[data-um-drag='accept'] {
+  border-color: var(--um-accent);
+}
+.um-liquid__vessel[data-um-drag='reject'] {
+  --um-liquid: var(--um-danger);
+  --um-liquid-2: var(--um-danger);
+}
+.um-liquid[data-done] .um-liquid__vessel {
+  --um-liquid: var(--um-success);
+  --um-liquid-2: color-mix(in oklab, var(--um-success) 70%, #38bdf8);
+}
+.um-liquid[data-error] .um-liquid__vessel {
+  --um-liquid: var(--um-danger);
+  --um-liquid-2: color-mix(in oklab, var(--um-danger) 70%, #f97316);
+}
+
+.um-liquid__fluid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translateY(calc((1 - var(--um-level)) * 100%));
+  transition: transform calc(var(--um-time) * 900ms) var(--um-ease);
+}
+.um-liquid__body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--um-liquid-2), var(--um-liquid));
+  transition: background var(--um-d-slow);
+}
+.um-liquid__wave {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - 1px);
+  width: 400%;
+  height: 20px;
+  transform-origin: bottom;
+  animation: um-wave-travel calc(var(--um-time) * 5s) linear infinite;
+  transition: transform var(--um-d-slow) var(--um-spring);
+}
+.um-liquid__wave path {
+  transition: fill var(--um-d-slow);
+}
+.um-liquid__wave--front path {
+  fill: var(--um-liquid-2);
+}
+.um-liquid__wave--back {
+  opacity: 0.45;
+  animation-duration: calc(var(--um-time) * 7s);
+  animation-direction: reverse;
+  bottom: calc(100% + 1px);
+}
+.um-liquid__wave--back path {
+  fill: var(--um-liquid);
+}
+.um-liquid__vessel[data-um-drag='accept'] .um-liquid__wave {
+  transform: scaleY(calc(1 + 0.9 * var(--um-intensity)));
+  animation-duration: calc(var(--um-time) * 1.6s);
+}
+.um-liquid[data-done] .um-liquid__wave {
+  transform: scaleY(0.3);
+}
+
+.um-liquid__bubble {
+  position: absolute;
+  bottom: -12px;
+  border-radius: 50%;
+  border: 1.5px solid rgb(255 255 255 / 0.6);
+  background: rgb(255 255 255 / 0.15);
+  opacity: 0;
+}
+.um-liquid[data-active] .um-liquid__bubble {
+  animation: um-bubble 3s ease-in infinite;
+}
+@keyframes um-bubble {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(calc(-1 * var(--um-zone-h))) translateX(10px); opacity: 0; }
+}
+
+.um-liquid__layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 24px;
+  text-align: center;
+  pointer-events: none;
+}
+.um-liquid__layer--inverse {
+  color: #fff;
+  clip-path: inset(calc((1 - var(--um-level)) * 100%) 0 0 0);
+  transition: clip-path calc(var(--um-time) * 900ms) var(--um-ease);
+}
+.um-liquid__layer--inverse .um-liquid__detail,
+.um-liquid__layer--inverse .um-liquid__icon {
+  color: rgb(255 255 255 / 0.85);
+}
+.um-liquid__layer--inverse .um-liquid__icon {
+  background: rgb(255 255 255 / 0.18);
+}
+.um-liquid__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: var(--um-accent);
+  background: var(--um-tint-strong);
+  margin-bottom: 4px;
+}
+.um-liquid__percent {
+  font-size: 3em;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+}
+.um-liquid__title {
+  font-size: 1.1em;
+}
+.um-liquid__detail {
+  color: var(--um-muted);
+  font-size: 0.9em;
+  font-variant-numeric: tabular-nums;
+}
+.um-liquid__footer {
+  margin-top: 0;
+}
+.um-liquid__footer-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.um-liquid .um-queue {
+  margin-top: 0;
+}
+.um-liquid .um-progress--bar {
+  height: 6px;
+}
+.um-liquid .um-progress--bar .um-progress__fill {
+  background: linear-gradient(90deg, var(--um-accent), var(--um-accent-2));
+}
+.um-liquid .um-progress--bar[data-status='success'] .um-progress__fill {
+  background: var(--um-success);
+}

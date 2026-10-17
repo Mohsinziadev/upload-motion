@@ -1,0 +1,144 @@
+/* Magnetic – pointer-reactive dot field */
+
+.um-magnetic {
+  display: grid;
+  gap: var(--um-gap);
+}
+.um-magnetic__zone {
+  --um-px: 0.5;
+  --um-py: 0.5;
+  --um-zone-h: 250px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: var(--um-shadow);
+  transition: border-color var(--um-d), box-shadow var(--um-d);
+}
+.um-magnetic__field,
+.um-magnetic__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.um-magnetic__field {
+  background-image: radial-gradient(circle, color-mix(in oklab, var(--um-text) 18%, transparent) 1.2px, transparent 1.6px);
+  background-size: 18px 18px;
+  background-position: center;
+}
+.um-magnetic__field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--um-accent) 2.2px, transparent 2.8px);
+  background-size: 18px 18px;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(circle 120px at calc(var(--um-px) * 100%) calc(var(--um-py) * 100%), #000 0%, transparent 100%);
+  mask-image: radial-gradient(circle 120px at calc(var(--um-px) * 100%) calc(var(--um-py) * 100%), #000 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity var(--um-d);
+}
+.um-magnetic__zone:hover .um-magnetic__field::after,
+.um-magnetic__zone[data-um-drag='accept'] .um-magnetic__field::after {
+  opacity: 1;
+}
+.um-magnetic__glow {
+  background: radial-gradient(circle 220px at calc(var(--um-px) * 100%) calc(var(--um-py) * 100%), var(--um-accent-soft), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--um-d);
+}
+.um-magnetic__zone:hover .um-magnetic__glow {
+  opacity: 0.6;
+}
+.um-magnetic__zone[data-um-drag='accept'] {
+  border-color: var(--um-accent);
+  box-shadow: 0 0 0 4px var(--um-accent-soft), var(--um-shadow);
+}
+.um-magnetic__zone[data-um-drag='accept'] .um-magnetic__glow {
+  opacity: 1;
+}
+.um-magnetic__zone[data-um-drag='reject'] {
+  border-color: var(--um-danger);
+}
+.um-magnetic[data-window-drag] .um-magnetic__field {
+  animation: um-mag-breathe calc(var(--um-time) * 1.2s) ease-in-out infinite;
+}
+@keyframes um-mag-breathe {
+  50% { background-size: 20px 20px; }
+}
+
+.um-magnetic__content {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  min-height: inherit;
+  padding: 28px 20px;
+  text-align: center;
+}
+.um-magnetic__core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+  border-radius: 20px;
+  color: #fff;
+  background: var(--um-gradient);
+  box-shadow: 0 16px 30px -12px color-mix(in oklab, var(--um-accent) 70%, transparent);
+  /* Pulled toward the pointer */
+  translate: calc((var(--um-px) - 0.5) * 70px * var(--um-intensity)) calc((var(--um-py) - 0.5) * 50px * var(--um-intensity));
+  transition: translate calc(var(--um-time) * 520ms) var(--um-spring), scale var(--um-d) var(--um-spring);
+}
+.um-magnetic__zone[data-um-drag='accept'] .um-magnetic__core {
+  scale: 1.12;
+}
+.um-magnetic__core[data-snap] {
+  animation: um-mag-snap calc(var(--um-time) * 640ms) var(--um-spring);
+}
+@keyframes um-mag-snap {
+  0% { transform: scale(1.35) rotate(-8deg); }
+  100% { transform: none; }
+}
+.um-magnetic__ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 28px;
+  border: 1.5px solid var(--um-accent);
+  opacity: 0;
+  pointer-events: none;
+}
+.um-magnetic__zone[data-um-drag='accept'] .um-magnetic__ring {
+  animation: um-mag-ring calc(var(--um-time) * 1.4s) var(--um-ease) infinite;
+}
+.um-magnetic__zone[data-um-drag='accept'] .um-magnetic__ring--2 {
+  animation-delay: calc(var(--um-time) * 0.7s);
+}
+.um-magnetic__core[data-snap] .um-magnetic__ring {
+  animation: um-mag-ring calc(var(--um-time) * 800ms) var(--um-ease) 1;
+}
+@keyframes um-mag-ring {
+  0% { opacity: 0.8; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+.um-magnetic__title {
+  font-size: 1.12em;
+}
+.um-magnetic__sub {
+  color: var(--um-muted);
+}
+.um-magnetic__queue .um-list__item {
+  animation: um-mag-in calc(var(--um-time) * 620ms) var(--um-spring) both;
+  animation-delay: calc(min(var(--um-i, 0), 8) * 50ms * var(--um-time));
+}
+.um-magnetic__queue .um-list__item[data-exiting] {
+  animation: um-exit calc(var(--um-time) * 320ms) var(--um-ease) forwards;
+}
+@keyframes um-mag-in {
+  from { opacity: 0; transform: translateY(-28px) scale(0.92); }
+}
+.um-magnetic__badge {
+  justify-self: start;
+}

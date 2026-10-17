@@ -1,0 +1,287 @@
+/* Card Fan – reference: dashed lavender zone, three tilted media cards, curved arrows */
+
+.um-fan {
+  display: grid;
+  gap: var(--um-gap);
+}
+.um-fan__zone {
+  background: var(--um-tint);
+  transition: background var(--um-d) var(--um-ease), transform var(--um-d) var(--um-spring);
+}
+.um-fan[data-mode='over'] .um-fan__zone {
+  background: var(--um-tint-strong);
+  transform: scale(calc(1 + 0.008 * var(--um-intensity)));
+}
+.um-fan[data-mode='reject'] .um-fan__zone {
+  background: color-mix(in oklab, var(--um-danger) 7%, var(--um-surface));
+}
+
+.um-fan__border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.um-fan__border rect {
+  fill: none;
+  stroke: color-mix(in oklab, var(--um-accent) 55%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  transition: stroke var(--um-d);
+}
+.um-fan[data-mode='anticipate'] .um-fan__border rect,
+.um-fan[data-mode='over'] .um-fan__border rect {
+  stroke: var(--um-accent);
+  animation: um-ants calc(var(--um-time) * 700ms) linear infinite;
+}
+.um-fan[data-mode='reject'] .um-fan__border rect {
+  stroke: var(--um-danger);
+}
+@keyframes um-ants {
+  to { stroke-dashoffset: -20; }
+}
+
+.um-fan__content {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: inherit;
+  padding: 28px 20px 24px;
+  text-align: center;
+}
+
+.um-fan__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  height: 104px;
+  margin-bottom: 14px;
+}
+.um-fan__cards {
+  position: relative;
+  width: 150px;
+  height: 96px;
+}
+.um-fan__card {
+  --rot: 0deg;
+  --tx: 0px;
+  --ty: 0px;
+  --sc: 1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 54px;
+  height: 66px;
+  margin: -33px 0 0 -27px;
+  display: grid;
+  place-items: center;
+  color: var(--um-accent);
+  background: var(--um-surface);
+  border: 1.5px solid color-mix(in oklab, var(--um-text) 70%, transparent);
+  border-radius: 9px;
+  box-shadow: 0 6px 16px -8px rgb(20 20 50 / 0.35);
+  transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(var(--sc));
+  transition: transform calc(var(--um-time) * 560ms) var(--um-spring), border-color var(--um-d), color var(--um-d);
+}
+.um-fan__card[data-pos='left'] {
+  --rot: calc(-14deg * var(--um-intensity));
+  --tx: -40px;
+  --ty: 6px;
+}
+.um-fan__card[data-pos='right'] {
+  --rot: calc(14deg * var(--um-intensity));
+  --tx: 40px;
+  --ty: 6px;
+}
+.um-fan__card[data-pos='center'] {
+  z-index: 1;
+  width: 60px;
+  height: 74px;
+  margin: -37px 0 0 -30px;
+  --ty: -4px;
+}
+.um-fan__card[data-pos='left'] svg,
+.um-fan__card[data-pos='right'] svg {
+  border-radius: 50%;
+}
+
+/* Idle float */
+.um-fan[data-mode='idle'] .um-fan__card {
+  animation: um-fan-float calc(var(--um-time) * 3.2s) ease-in-out infinite;
+}
+.um-fan[data-mode='idle'] .um-fan__card[data-pos='center'] { animation-delay: -1.1s; }
+.um-fan[data-mode='idle'] .um-fan__card[data-pos='right'] { animation-delay: -2.2s; }
+@keyframes um-fan-float {
+  50% { translate: 0 calc(-3px * var(--um-intensity)); }
+}
+
+/* Anticipation: files are being dragged somewhere over the window */
+.um-fan[data-mode='anticipate'] .um-fan__card[data-pos='left'] {
+  --rot: calc(-22deg * var(--um-intensity));
+  --tx: -54px;
+  --ty: 2px;
+}
+.um-fan[data-mode='anticipate'] .um-fan__card[data-pos='right'] {
+  --rot: calc(22deg * var(--um-intensity));
+  --tx: 54px;
+  --ty: 2px;
+}
+.um-fan[data-mode='anticipate'] .um-fan__card[data-pos='center'] {
+  --ty: -10px;
+  --sc: 1.05;
+}
+
+/* Over the zone: cards open wide, lift and glow */
+.um-fan[data-mode='over'] .um-fan__card {
+  border-color: var(--um-accent);
+}
+.um-fan[data-mode='over'] .um-fan__card[data-pos='left'] {
+  --rot: calc(-28deg * var(--um-intensity));
+  --tx: -64px;
+  --ty: -4px;
+}
+.um-fan[data-mode='over'] .um-fan__card[data-pos='right'] {
+  --rot: calc(28deg * var(--um-intensity));
+  --tx: 64px;
+  --ty: -4px;
+}
+.um-fan[data-mode='over'] .um-fan__card[data-pos='center'] {
+  --ty: -18px;
+  --sc: 1.12;
+  box-shadow: 0 14px 30px -10px color-mix(in oklab, var(--um-accent) 60%, transparent);
+}
+
+/* Reject: cards close up and shake */
+.um-fan[data-mode='reject'] .um-fan__card {
+  --tx: 0px;
+  --rot: 0deg;
+  color: var(--um-danger);
+  border-color: var(--um-danger);
+}
+.um-fan[data-mode='reject'] .um-fan__cards {
+  animation: um-shake calc(var(--um-time) * 480ms) var(--um-ease);
+}
+
+/* Deal: re-keyed after a drop, cards spring out from a stack */
+.um-fan__cards[data-dealt] .um-fan__card {
+  animation: um-fan-deal calc(var(--um-time) * 720ms) var(--um-spring) both;
+}
+.um-fan__cards[data-dealt] .um-fan__card[data-pos='center'] { animation-delay: calc(var(--um-time) * 60ms); }
+.um-fan__cards[data-dealt] .um-fan__card[data-pos='right'] { animation-delay: calc(var(--um-time) * 120ms); }
+@keyframes um-fan-deal {
+  from { transform: translate(0, 24px) rotate(0deg) scale(0.6); opacity: 0; }
+}
+
+.um-fan__arrow {
+  flex: none;
+  color: var(--um-accent);
+  transition: transform calc(var(--um-time) * 500ms) var(--um-spring);
+}
+.um-fan__arrow[data-side='right'] {
+  transform: scaleX(-1);
+}
+.um-fan__arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.um-fan[data-mode='anticipate'] .um-fan__arrow-line,
+.um-fan[data-mode='over'] .um-fan__arrow-line {
+  animation: um-fan-draw calc(var(--um-time) * 600ms) var(--um-ease) both;
+}
+.um-fan[data-mode='anticipate'] .um-fan__arrow-head,
+.um-fan[data-mode='over'] .um-fan__arrow-head {
+  animation: um-fan-draw calc(var(--um-time) * 300ms) var(--um-ease) calc(var(--um-time) * 450ms) both;
+}
+.um-fan[data-mode='over'] .um-fan__arrow[data-side='left'] {
+  transform: translate(calc(8px * var(--um-intensity)), 0);
+}
+.um-fan[data-mode='over'] .um-fan__arrow[data-side='right'] {
+  transform: scaleX(-1) translate(calc(8px * var(--um-intensity)), 0);
+}
+.um-fan[data-mode='idle'] .um-fan__arrow[data-side='left'] {
+  animation: um-fan-nudge calc(var(--um-time) * 2.4s) ease-in-out infinite;
+}
+.um-fan[data-mode='idle'] .um-fan__arrow[data-side='right'] {
+  animation: um-fan-nudge-r calc(var(--um-time) * 2.4s) ease-in-out infinite;
+}
+.um-fan[data-mode='reject'] .um-fan__arrow {
+  opacity: 0.25;
+}
+@keyframes um-fan-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes um-fan-nudge {
+  50% { transform: translate(calc(4px * var(--um-intensity)), 2px); }
+}
+@keyframes um-fan-nudge-r {
+  0%, 100% { transform: scaleX(-1); }
+  50% { transform: scaleX(-1) translate(calc(4px * var(--um-intensity)), 2px); }
+}
+
+.um-fan__title {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(1.05em, 3.6cqi, 1.35em);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.um-fan__title em {
+  font-style: normal;
+  color: var(--um-accent);
+}
+.um-fan[data-mode='reject'] .um-fan__title {
+  color: var(--um-danger);
+}
+.um-fan__sub {
+  margin: 10px 0 0;
+  color: var(--um-muted);
+  font-size: 0.92em;
+}
+.um-fan__hint {
+  margin-top: 6px;
+  font-size: 0.8em;
+  opacity: 0.85;
+}
+.um-fan__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.um-fan__footer .um-badge {
+  margin-right: auto;
+}
+.um-fan__footer .um-start-btn {
+  margin: 0 auto;
+}
+.um-fan__footer .um-badge + .um-start-btn {
+  margin: 0;
+}
+
+@container (max-width: 380px) {
+  .um-fan__stage {
+    gap: 2px;
+  }
+  .um-fan__arrow {
+    width: 30px;
+    height: 30px;
+  }
+  .um-fan__cards {
+    width: 120px;
+    scale: 0.85;
+  }
+  .um-fan__content {
+    padding: 22px 12px 18px;
+  }
+}

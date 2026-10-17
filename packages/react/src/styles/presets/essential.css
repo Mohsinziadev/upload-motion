@@ -1,0 +1,41 @@
+/* Essential – restrained, professional */
+
+.um-essential__zone {
+  --um-zone-h: 180px;
+  border: 1.5px dashed color-mix(in oklab, var(--um-muted) 40%, var(--um-border));
+  background: var(--um-surface);
+  transition: border-color var(--um-d-fast), background var(--um-d-fast);
+}
+.um-essential__zone:hover {
+  border-color: color-mix(in oklab, var(--um-accent) 45%, var(--um-border));
+}
+.um-essential__zone[data-um-drag='accept'] {
+  border-style: solid;
+  border-color: var(--um-accent);
+  background: var(--um-tint);
+}
+.um-essential__zone[data-um-drag='reject'] {
+  border-style: solid;
+  border-color: var(--um-danger);
+  background: color-mix(in oklab, var(--um-danger) 5%, var(--um-surface));
+}
+.um-essential__zone .um-zone__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--um-surface-2);
+  color: var(--um-muted);
+}
+.um-essential__zone[data-um-drag='accept'] .um-zone__icon {
+  color: var(--um-accent);
+  background: var(--um-tint-strong);
+}
+.um-essential .um-card {
+  box-shadow: none;
+}
+.um-essential .um-list__item {
+  animation-duration: calc(var(--um-time) * 240ms);
+}
+.um-essential .um-progress--bar {
+  height: 3px;
+}

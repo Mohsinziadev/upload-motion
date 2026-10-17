@@ -1,0 +1,112 @@
+/* Gradient Beam – rotating light along the border */
+
+.um-beam {
+  display: grid;
+  gap: var(--um-gap);
+}
+.um-beam__zone {
+  --um-zone-h: 230px;
+  --um-beam-speed: 4s;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--um-accent) 14%, transparent), transparent 70%),
+    var(--um-surface);
+  border-radius: var(--um-radius);
+}
+.um-beam[data-mode='active'] .um-beam__zone {
+  --um-beam-speed: 2.4s;
+}
+.um-beam[data-mode='accept'] .um-beam__zone {
+  --um-beam-speed: 0.9s;
+}
+.um-beam__border {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background:
+    conic-gradient(from var(--um-beam-angle), transparent 0deg 250deg, var(--um-accent) 300deg, var(--um-accent-2) 340deg, transparent 360deg),
+    linear-gradient(var(--um-border), var(--um-border));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: um-beam-rotate calc(var(--um-time) * var(--um-beam-speed)) linear infinite;
+}
+.um-beam[data-mode='accept'] .um-beam__border {
+  background:
+    conic-gradient(from var(--um-beam-angle), var(--um-accent-2) 0deg, transparent 70deg 110deg, var(--um-accent) 180deg, transparent 250deg 290deg, var(--um-accent-2) 360deg),
+    linear-gradient(var(--um-border), var(--um-border));
+  padding: 2px;
+}
+.um-beam[data-mode='reject'] .um-beam__border {
+  background: linear-gradient(var(--um-danger), var(--um-danger));
+  animation: none;
+}
+@keyframes um-beam-rotate {
+  to { --um-beam-angle: 360deg; }
+}
+.um-beam__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--um-text) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--um-text) 5%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 70%);
+}
+.um-beam__content {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
+  min-height: inherit;
+  padding: 28px;
+  text-align: center;
+}
+.um-beam__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 6px;
+  border-radius: 16px;
+  color: var(--um-accent);
+  background: var(--um-surface-2);
+  border: 1px solid var(--um-border);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--um-accent) 6%, transparent), 0 0 40px -8px var(--um-accent);
+  transition: transform var(--um-d) var(--um-spring), box-shadow var(--um-d);
+}
+.um-beam[data-mode='accept'] .um-beam__icon {
+  transform: translateY(-6px) scale(1.06);
+  box-shadow: 0 0 0 8px var(--um-accent-soft), 0 0 60px -6px var(--um-accent);
+}
+.um-beam__title {
+  font-size: 1.15em;
+  letter-spacing: -0.01em;
+}
+.um-beam__sub {
+  margin: 4px 0;
+}
+.um-beam .um-card {
+  background: color-mix(in oklab, var(--um-surface-2) 60%, var(--um-surface));
+}
+.um-beam .um-card[data-celebrate]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(100deg, transparent 20%, color-mix(in oklab, var(--um-success) 25%, transparent) 50%, transparent 80%);
+  animation: um-beam-flash calc(var(--um-time) * 900ms) var(--um-ease) forwards;
+  pointer-events: none;
+}
+@keyframes um-beam-flash {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); opacity: 0; }
+}
+.um-beam__badge {
+  justify-self: start;
+}

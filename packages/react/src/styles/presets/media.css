@@ -1,0 +1,694 @@
+/* Media presets: Bloom, Pixel, Page Reveal, Filmstrip, Waveform, Adaptive */
+
+.um-media {
+  display: grid;
+  gap: var(--um-gap);
+}
+.um-media__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: var(--um-gap);
+}
+.um-media__items {
+  display: contents;
+}
+.um-media__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.um-media .um-footer-row {
+  margin-top: 0;
+}
+
+/* ---------------------------------------------------------- zone tile */
+
+.um-zonetile {
+  --um-zone-h: 0px;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 12px;
+  text-align: center;
+  border: 1.5px dashed color-mix(in oklab, var(--um-accent) 45%, var(--um-border));
+  background: var(--um-tint);
+  color: var(--um-muted);
+  font-size: 0.88em;
+  font-weight: 600;
+  transition: transform var(--um-d) var(--um-spring), background var(--um-d), border-color var(--um-d);
+}
+.um-media--page .um-zonetile {
+  aspect-ratio: 0.78;
+}
+.um-zonetile:hover {
+  background: var(--um-tint-strong);
+}
+.um-zonetile[data-um-drag='accept'] {
+  transform: scale(1.04);
+  border-style: solid;
+  border-color: var(--um-accent);
+  background: var(--um-tint-strong);
+  color: var(--um-accent);
+}
+.um-zonetile[data-um-drag='reject'] {
+  border-color: var(--um-danger);
+  color: var(--um-danger);
+}
+.um-zonetile__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--um-accent);
+  background: var(--um-surface);
+  box-shadow: 0 6px 16px -8px color-mix(in oklab, var(--um-accent) 60%, transparent);
+  transition: transform var(--um-d) var(--um-spring);
+}
+.um-zonetile[data-um-drag='accept'] .um-zonetile__icon {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* --------------------------------------------------------------- tiles */
+
+.um-tile {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+.um-tile__visual {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--um-radius);
+  overflow: hidden;
+  background: var(--um-surface-2);
+  border: 1px solid var(--um-border);
+  transition: transform var(--um-d) var(--um-spring), box-shadow var(--um-d);
+}
+.um-media--page .um-tile__visual {
+  aspect-ratio: 0.78;
+  overflow: visible;
+  background: none;
+  border: 0;
+}
+.um-tile[data-celebrate] .um-tile__visual {
+  animation: um-tile-pop calc(var(--um-time) * 600ms) var(--um-spring);
+}
+@keyframes um-tile-pop {
+  40% { transform: scale(1.05); }
+}
+.um-tile[data-status='error'] .um-tile__visual {
+  box-shadow: 0 0 0 2px var(--um-danger);
+  animation: um-shake calc(var(--um-time) * 480ms) var(--um-ease);
+}
+.um-tile__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px;
+  pointer-events: none;
+}
+.um-tile__badge {
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: rgb(10 10 20 / 0.55);
+  backdrop-filter: blur(6px);
+}
+.um-tile__badge:empty {
+  visibility: hidden;
+}
+.um-tile[data-status='success'] .um-tile__badge {
+  padding: 2px;
+  background: none;
+  backdrop-filter: none;
+}
+.um-tile__actions {
+  pointer-events: auto;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--um-surface) 88%, transparent);
+  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.25);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--um-d-fast), transform var(--um-d-fast);
+}
+.um-tile:hover .um-tile__actions,
+.um-tile:focus-within .um-tile__actions,
+.um-tile[data-status='error'] .um-tile__actions,
+.um-tile[data-status='pending'] .um-tile__actions,
+.um-tile[data-status='canceled'] .um-tile__actions {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: none) {
+  .um-tile__actions {
+    opacity: 1;
+    transform: none;
+  }
+}
+.um-tile__actions .um-icon-btn {
+  width: 28px;
+  height: 28px;
+}
+.um-tile__meta {
+  display: grid;
+  min-width: 0;
+  padding: 0 2px;
+}
+.um-tile__name {
+  font-size: 0.86em;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.um-tile .um-status {
+  font-size: 0.78em;
+}
+.um-tile .um-burst {
+  top: 40%;
+}
+
+/* --------------------------------------------------------------- bloom */
+
+.um-bloom {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.um-bloom__under,
+.um-bloom__over {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.um-bloom__under {
+  filter: blur(6px) grayscale(1) brightness(1.1);
+  opacity: 0.55;
+  transform: scale(1.08);
+}
+.um-bloom__over {
+  clip-path: circle(calc(var(--um-p) * 72%) at 50% 50%);
+  transition: clip-path calc(var(--um-time) * 500ms) var(--um-ease);
+}
+.um-bloom[data-status='pending'] .um-bloom__over,
+.um-bloom[data-status='queued'] .um-bloom__over {
+  clip-path: circle(0% at 50% 50%);
+}
+.um-bloom[data-status='success'] .um-bloom__over {
+  clip-path: circle(75% at 50% 50%);
+}
+.um-bloom[data-status='success'] .um-bloom__under {
+  opacity: 0;
+}
+.um-bloom__wash {
+  display: grid;
+  place-items: center;
+  color: var(--k);
+  background: color-mix(in oklab, var(--k) 10%, var(--um-surface-2));
+}
+.um-bloom__wash--on {
+  color: #fff;
+  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--k) 80%, #fff), var(--k));
+  align-content: center;
+  gap: 4px;
+}
+.um-bloom__ext {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* --------------------------------------------------------------- pixel */
+
+.um-pixel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 1px;
+  padding: 1px;
+  transition: gap var(--um-d-slow) var(--um-ease), padding var(--um-d-slow);
+}
+.um-pixel__cell {
+  --v: clamp(0, (var(--um-p) - var(--o)) * 24, 1);
+  border-radius: 1px;
+  opacity: var(--v);
+  transform: translate(calc(var(--dx) * (1 - var(--v)) * var(--um-intensity)), calc(var(--dy) * (1 - var(--v)) * var(--um-intensity))) scale(calc(0.3 + 0.7 * var(--v)));
+  transition: opacity calc(var(--um-time) * 450ms) var(--um-ease), transform calc(var(--um-time) * 650ms) var(--um-spring);
+}
+.um-pixel[data-status='success'] {
+  gap: 0;
+  padding: 0;
+}
+.um-pixel[data-status='success']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.6) 50%, transparent 70%);
+  animation: um-pixel-shine calc(var(--um-time) * 900ms) var(--um-ease) forwards;
+}
+@keyframes um-pixel-shine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+.um-pixel__glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: calc(0.25 + var(--um-p) * 0.75);
+  transition: opacity var(--um-d);
+}
+.um-pixel__glyph .um-ficon__paper {
+  background: color-mix(in oklab, var(--um-surface) 90%, transparent);
+}
+
+/* ---------------------------------------------------------------- page */
+
+.um-page {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  padding: 18px 12px 12px;
+  border-radius: 10px;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: 0 10px 24px -14px rgb(20 20 50 / 0.35);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+}
+.um-page__fold {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(225deg, transparent 50%, color-mix(in oklab, var(--k) 25%, var(--um-surface-2)) 50%);
+  transition: width var(--um-d) var(--um-spring), height var(--um-d) var(--um-spring);
+}
+.um-page__lines {
+  display: grid;
+  gap: 6px;
+}
+.um-page__line {
+  --ink: clamp(0, (var(--um-p) - var(--li)) * 14, 1);
+  display: block;
+  height: 4px;
+  width: var(--w);
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--um-text) calc(10% + var(--ink) * 55%), transparent);
+  transition: background calc(var(--um-time) * 300ms);
+}
+.um-page__line:nth-child(1) {
+  height: 6px;
+  background: color-mix(in oklab, var(--k) calc(20% + var(--ink) * 80%), transparent);
+}
+.um-page[data-real] .um-page__lines {
+  gap: 2px;
+}
+.um-page[data-real] .um-page__line {
+  height: auto;
+  width: auto;
+  background: none;
+  font: 500 6.5px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre;
+  overflow: hidden;
+  color: color-mix(in oklab, var(--um-text) calc(18% + var(--ink) * 72%), transparent);
+}
+.um-page[data-real] .um-page__line:nth-child(1) {
+  color: color-mix(in oklab, var(--k) calc(30% + var(--ink) * 70%), var(--um-text));
+  font-weight: 700;
+}
+.um-page__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--um-accent);
+  box-shadow: 0 0 14px 3px var(--um-accent-soft), 0 -18px 24px -6px var(--um-accent-soft);
+  transform: translateY(calc(var(--um-p) * 100cqh));
+  opacity: 0;
+  transition: transform calc(var(--um-time) * 400ms) var(--um-ease), opacity var(--um-d);
+}
+.um-tile__visual {
+  container-type: size;
+}
+.um-page[data-status='uploading'] .um-page__scan {
+  opacity: 1;
+}
+.um-page__tag {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+}
+.um-page__stamp {
+  position: absolute;
+  right: 8px;
+  bottom: 14px;
+  padding: 3px 7px;
+  border: 2px solid var(--um-success);
+  border-radius: 6px;
+  color: var(--um-success);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in oklab, var(--um-success) 8%, var(--um-surface));
+  rotate: -12deg;
+  animation: um-stamp calc(var(--um-time) * 520ms) var(--um-spring) both;
+}
+@keyframes um-stamp {
+  0% { transform: scale(2.4); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.um-page[data-status='success'] .um-page__fold {
+  width: 30px;
+  height: 30px;
+}
+.um-page[data-status='error'] {
+  border-color: var(--um-danger);
+}
+
+/* ---------------------------------------------------------- row layout */
+
+.um-media__banner {
+  --um-zone-h: 0px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--um-surface);
+  border: 1.5px dashed color-mix(in oklab, var(--um-accent) 40%, var(--um-border));
+  transition: border-color var(--um-d), background var(--um-d);
+}
+.um-media__banner[data-um-drag='accept'] {
+  border-style: solid;
+  border-color: var(--um-accent);
+  background: var(--um-tint);
+}
+.um-media__banner[data-um-drag='reject'] {
+  border-color: var(--um-danger);
+}
+.um-media__banner-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: #fff;
+  background: var(--um-gradient);
+}
+.um-media__banner-text {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.um-media__banner-text > span {
+  color: var(--um-muted);
+  font-size: 0.9em;
+}
+.um-media__deco {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: 46%;
+  z-index: -1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding-right: 18px;
+  opacity: 0.18;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+  mask-image: linear-gradient(90deg, transparent, #000 60%);
+}
+.um-media__deco > span {
+  width: 4px;
+  height: 40%;
+  border-radius: 4px;
+  background: var(--um-accent);
+  transform: scaleY(calc(0.3 + mod(calc(var(--i) * 37), 10) / 14));
+}
+.um-media__banner[data-um-drag='accept'] .um-media__deco {
+  opacity: 0.5;
+}
+.um-media__banner[data-um-drag='accept'] .um-media__deco > span {
+  animation: um-eq calc(var(--um-time) * 700ms) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -63ms);
+}
+@keyframes um-eq {
+  from { transform: scaleY(0.2); }
+  to { transform: scaleY(1.1); }
+}
+.um-media--film .um-media__deco > span {
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  transform: none;
+}
+
+.um-vrow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 10px 10px 12px;
+  border-radius: calc(var(--um-radius) * 0.75);
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+}
+.um-vrow[data-status='error'] {
+  border-color: color-mix(in oklab, var(--um-danger) 45%, var(--um-border));
+}
+.um-vrow[data-shake] {
+  animation: um-shake calc(var(--um-time) * 480ms) var(--um-ease);
+}
+.um-vrow__visual {
+  position: relative;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.um-vrow[data-visual='filmstrip'] .um-vrow__visual {
+  width: min(52%, 300px);
+  height: 64px;
+  overflow: visible;
+}
+.um-vrow[data-visual='waveform'] .um-vrow__visual {
+  width: min(48%, 280px);
+  height: 48px;
+  overflow: visible;
+}
+.um-vrow[data-visual='page'] .um-vrow__visual {
+  width: 52px;
+  height: 66px;
+  overflow: visible;
+  container-type: size;
+}
+.um-vrow[data-visual='page'] .um-page {
+  padding: 12px 7px 7px;
+}
+.um-vrow[data-visual='page'] .um-page__lines {
+  gap: 3.5px;
+}
+.um-vrow[data-visual='page'] .um-page__line {
+  height: 2.5px;
+}
+.um-vrow[data-visual='page'] .um-page[data-real] .um-page__line {
+  font-size: 3.5px;
+}
+.um-vrow[data-visual='page'] .um-page__tag,
+.um-vrow[data-visual='page'] .um-page__stamp {
+  display: none;
+}
+.um-vrow[data-visual='card'] .um-vrow__visual {
+  display: grid;
+  place-items: center;
+  overflow: visible;
+}
+.um-vrow__body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.um-vrow__burst {
+  left: 40px;
+}
+
+/* ------------------------------------------------------------ filmstrip */
+
+.um-film {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 6px;
+  background: #121218;
+  padding: 10px 6px;
+  overflow: hidden;
+}
+.um-film::before,
+.um-film::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: repeating-linear-gradient(90deg, transparent 0 4px, rgb(255 255 255 / 0.55) 4px 9px, transparent 9px 12px);
+  opacity: 0.7;
+  animation: um-film-roll calc(var(--um-time) * 1s) linear infinite;
+  animation-play-state: paused;
+}
+.um-film::before { top: 2.5px; }
+.um-film::after { bottom: 2.5px; }
+.um-film[data-status='uploading']::before,
+.um-film[data-status='uploading']::after {
+  animation-play-state: running;
+}
+@keyframes um-film-roll {
+  to { background-position: 12px 0; }
+}
+.um-film__strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+  height: 100%;
+}
+.um-film__frame {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #22222c;
+  color: rgb(255 255 255 / 0.4);
+  filter: grayscale(1) brightness(0.45);
+  transition: filter calc(var(--um-time) * 380ms) var(--um-ease), transform calc(var(--um-time) * 380ms) var(--um-spring);
+}
+.um-film__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.um-film__frame[data-lit] {
+  filter: none;
+  color: #fff;
+  background: color-mix(in oklab, var(--k) 60%, #22222c);
+  animation: um-frame-lit calc(var(--um-time) * 380ms) var(--um-spring);
+}
+@keyframes um-frame-lit {
+  50% { transform: scale(1.08); }
+}
+.um-film__playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(6px + var(--um-p) * (100% - 12px));
+  width: 2px;
+  background: var(--um-accent-2);
+  box-shadow: 0 0 10px var(--um-accent-2);
+  transition: left calc(var(--um-time) * 400ms) var(--um-ease);
+}
+.um-film[data-status='success'] .um-film__playhead,
+.um-film[data-status='pending'] .um-film__playhead {
+  opacity: 0;
+}
+.um-film[data-status='error'] {
+  box-shadow: 0 0 0 2px var(--um-danger);
+}
+
+/* ------------------------------------------------------------- waveform */
+
+.um-wave {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.um-wave__layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.um-wave__layer--fill {
+  clip-path: inset(0 calc((1 - var(--um-p)) * 100%) 0 0);
+  transition: clip-path calc(var(--um-time) * 400ms) var(--um-ease);
+}
+.um-wave__bar {
+  flex: 1;
+  height: calc(var(--h) * 100%);
+  min-height: 3px;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--um-muted) 30%, transparent);
+}
+.um-wave__layer--fill .um-wave__bar {
+  background: linear-gradient(180deg, var(--um-accent-2), var(--um-accent));
+}
+.um-wave[data-status='success'] .um-wave__layer--fill .um-wave__bar {
+  background: var(--um-success);
+}
+.um-wave[data-status='error'] .um-wave__layer--fill .um-wave__bar {
+  background: var(--um-danger);
+}
+.um-wave__bar[data-head] {
+  animation: um-eq calc(var(--um-time) * 260ms) ease-in-out infinite alternate;
+}
+.um-wave[data-ripple] .um-wave__layer--fill .um-wave__bar {
+  animation: um-wave-ripple calc(var(--um-time) * 700ms) var(--um-ease) both;
+  animation-delay: calc(var(--bi) * 500ms * var(--um-time));
+}
+@keyframes um-wave-ripple {
+  40% { transform: scaleY(1.45); }
+}
+.um-wave__play {
+  flex: none;
+  color: #fff;
+  background: var(--um-gradient);
+}
+.um-wave__play:hover {
+  color: #fff;
+  background: var(--um-gradient);
+  transform: scale(1.06);
+}
+.um-wave__play[aria-pressed='true'] {
+  box-shadow: 0 0 0 4px var(--um-accent-soft);
+}
+
+@container (max-width: 520px) {
+  .um-vrow {
+    flex-wrap: wrap;
+  }
+  .um-vrow[data-visual='filmstrip'] .um-vrow__visual,
+  .um-vrow[data-visual='waveform'] .um-vrow__visual {
+    width: 100%;
+    order: 3;
+  }
+  .um-media__banner .um-badge {
+    display: none;
+  }
+}

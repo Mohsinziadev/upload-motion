@@ -1,0 +1,294 @@
+/* Wave Bar – reference: compact pill, lavender fill, travelling wave line */
+
+.um-wavebar {
+  display: grid;
+  gap: 10px;
+}
+.um-wavebar__bar {
+  --um-zone-h: 0px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 96px;
+  padding: 18px 20px 22px 28px;
+  border-radius: calc(var(--um-radius) * 1.35);
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: var(--um-shadow);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform var(--um-d) var(--um-spring), box-shadow var(--um-d), border-color var(--um-d);
+}
+.um-wavebar[data-state='idle'] .um-wavebar__bar {
+  cursor: pointer;
+}
+.um-wavebar[data-state='idle'] .um-wavebar__bar:hover {
+  border-color: color-mix(in oklab, var(--um-accent) 35%, var(--um-border));
+}
+.um-wavebar[data-drag='accept'] .um-wavebar__bar {
+  transform: scale(calc(1 + 0.02 * var(--um-intensity)));
+  border-color: var(--um-accent);
+  box-shadow: 0 0 0 4px var(--um-accent-soft), var(--um-shadow);
+}
+.um-wavebar[data-drag='reject'] .um-wavebar__bar {
+  border-color: var(--um-danger);
+  animation: um-shake calc(var(--um-time) * 480ms) var(--um-ease);
+}
+
+.um-wavebar__fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--um-tint);
+  transform-origin: left center;
+  transform: scaleX(var(--um-p));
+  transition: transform calc(var(--um-time) * 600ms) var(--um-ease), background var(--um-d-slow);
+}
+.um-wavebar__edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--um-p) * 100%);
+  width: 1px;
+  z-index: -1;
+  background: color-mix(in oklab, var(--um-accent) 18%, var(--um-border));
+  transition: left calc(var(--um-time) * 600ms) var(--um-ease), opacity var(--um-d);
+}
+.um-wavebar[data-state='idle'] .um-wavebar__fill,
+.um-wavebar[data-state='idle'] .um-wavebar__edge {
+  opacity: 0;
+}
+.um-wavebar[data-state='idle'][data-drag='accept'] .um-wavebar__fill {
+  opacity: 1;
+  transform: scaleX(1);
+  background: var(--um-tint-strong);
+}
+.um-wavebar[data-state='done'] .um-wavebar__fill {
+  background: color-mix(in oklab, var(--um-success) 8%, var(--um-surface));
+}
+.um-wavebar[data-state='done'] .um-wavebar__edge {
+  opacity: 0;
+}
+.um-wavebar[data-state='error'] .um-wavebar__fill {
+  background: color-mix(in oklab, var(--um-danger) 7%, var(--um-surface));
+}
+.um-wavebar[data-state='paused'] .um-wavebar__fill {
+  background: color-mix(in oklab, var(--um-warning) 8%, var(--um-surface));
+}
+
+.um-wavebar__text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.um-wavebar__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.12em;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  min-width: 0;
+}
+.um-wavebar__check {
+  flex: none;
+}
+.um-wavebar__badge {
+  margin-left: 2px;
+}
+.um-wavebar__detail {
+  color: var(--um-muted);
+  font-size: 0.95em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.um-wavebar__hint {
+  font-size: 1em;
+}
+
+.um-wavebar__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+.um-wavebar__controls .um-icon-btn {
+  width: 40px;
+  height: 40px;
+  background: color-mix(in oklab, var(--um-text) 6%, var(--um-surface));
+  color: var(--um-text);
+}
+.um-wavebar__controls .um-icon-btn:hover {
+  background: color-mix(in oklab, var(--um-text) 11%, var(--um-surface));
+}
+.um-wavebar__controls .um-icon-btn[data-tone='accent'] {
+  color: var(--um-accent);
+}
+.um-wavebar__browse {
+  color: var(--um-accent);
+  background: var(--um-tint-strong);
+}
+
+/* The wave: clipped to the progress, travelling, flattening on success */
+.um-wavebar__wave-clip {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 10px;
+  height: 16px;
+  overflow: hidden;
+  clip-path: inset(0 calc((1 - var(--um-p)) * 100% - 12px) 0 0);
+  transition: clip-path calc(var(--um-time) * 600ms) var(--um-ease), opacity var(--um-d);
+  pointer-events: none;
+}
+.um-wavebar__wave {
+  display: block;
+  width: 200%;
+  height: 100%;
+  fill: none;
+  stroke: var(--um-accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transform-origin: 50% 50%;
+  animation: um-wave-travel calc(var(--um-time) * 2.4s) linear infinite;
+  transition: transform calc(var(--um-time) * 900ms) var(--um-spring), stroke var(--um-d-slow);
+}
+.um-wavebar__wave path {
+  vector-effect: non-scaling-stroke;
+}
+.um-wavebar[data-state='idle'] .um-wavebar__wave-clip {
+  opacity: 0;
+}
+.um-wavebar[data-state='idle'][data-drag='accept'] .um-wavebar__wave-clip {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+.um-wavebar[data-drag='accept'] .um-wavebar__wave {
+  transform: scaleY(calc(1 + 0.8 * var(--um-intensity)));
+  animation-duration: calc(var(--um-time) * 0.9s);
+}
+.um-wavebar[data-state='paused'] .um-wavebar__wave {
+  animation-play-state: paused;
+  stroke: var(--um-warning);
+}
+.um-wavebar[data-state='done'] .um-wavebar__wave {
+  transform: scaleY(0.04);
+  stroke: var(--um-success);
+  animation-play-state: paused;
+}
+.um-wavebar[data-state='error'] .um-wavebar__wave {
+  stroke: var(--um-danger);
+  transform: scaleY(1.6);
+  animation-play-state: paused;
+}
+
+.um-wavebar__burst {
+  left: 40px;
+}
+
+/* Drawer: grid rows 0fr → 1fr expands without measuring heights */
+.um-wavebar__drawer {
+  display: grid;
+  grid-template-rows: 1fr;
+  animation: um-drawer calc(var(--um-time) * 420ms) var(--um-ease);
+}
+.um-wavebar__drawer[hidden] {
+  display: none;
+}
+.um-wavebar__drawer-inner {
+  min-height: 0;
+  padding: 10px;
+  border-radius: calc(var(--um-radius) * 1.1);
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: var(--um-shadow);
+}
+.um-wavebar__drawer-inner .um-queue {
+  margin-top: 0;
+}
+.um-wavebar__drawer-inner .um-rejections {
+  margin: 0 0 10px;
+}
+@keyframes um-drawer {
+  from { grid-template-rows: 0fr; opacity: 0; transform: translateY(-8px); }
+}
+
+/* Menu */
+.um-menu {
+  position: relative;
+}
+.um-menu__list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  min-width: 200px;
+  padding: 6px;
+  display: grid;
+  border-radius: 14px;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  box-shadow: 0 18px 40px -12px rgb(20 20 50 / 0.3);
+  animation: um-menu-in calc(var(--um-time) * 200ms) var(--um-ease);
+  transform-origin: top right;
+}
+.um-menu[data-align='start'] .um-menu__list {
+  right: auto;
+  left: 0;
+  transform-origin: top left;
+}
+.um-menu__item {
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: 9px;
+  color: var(--um-text);
+  cursor: pointer;
+}
+.um-menu__item:hover:not(:disabled),
+.um-menu__item:focus-visible {
+  background: var(--um-surface-2);
+  outline: none;
+}
+.um-menu__item:disabled {
+  color: var(--um-muted);
+  opacity: 0.6;
+  cursor: default;
+}
+.um-menu__item[data-tone='danger']:not(:disabled) {
+  color: var(--um-danger);
+}
+@keyframes um-menu-in {
+  from { opacity: 0; transform: scale(0.94) translateY(-4px); }
+}
+
+@container (max-width: 520px) {
+  .um-wavebar__bar {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    padding: 16px 16px 30px 18px;
+  }
+  .um-wavebar__text {
+    flex-basis: 100%;
+  }
+  .um-wavebar__title {
+    flex-wrap: wrap;
+  }
+  .um-wavebar__controls {
+    margin-left: auto;
+  }
+  .um-wavebar__controls {
+    gap: 6px;
+  }
+  .um-wavebar__controls .um-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
