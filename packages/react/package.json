@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Animated, accessible file uploads for React: 17 motion presets on top of a real, framework-agnostic upload engine with progress, retries, cancellation and validation.",
   "license": "MIT",
-  "author": "Mohsin Zia",
+  "author": "Mohsin Zia <mohsinziadev@gmail.com>",
   "keywords": [
     "react",
     "upload",
@@ -16,6 +16,7 @@
     "headless",
     "typescript"
   ],
+  "homepage": "https://www.m2toolkit.com/npm-packages/upload-motion",
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -73,7 +74,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "size": "node scripts/size.mjs",
-    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build",
+    "demo": "node scripts/build-css.mjs && vite --config demo/vite.config.ts",
+    "build:site": "node scripts/build-css.mjs && node scripts/build-site.mjs"
   },
   "peerDependencies": {
     "react": ">=18.2.0",
@@ -86,10 +89,12 @@
     "@testing-library/user-event": "^14.6.8",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "jsdom": "^27.4.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tsdown": "^0.23.1",
+    "vite": "^8.3.4",
     "vitest": "^4.1.12"
   },
   "publishConfig": {
@@ -97,7 +102,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mohsinzia/upload-motion.git",
+    "url": "git+https://github.com/Mohsinziadev/upload-motion.git",
     "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/Mohsinziadev/upload-motion/issues"
   }
 }

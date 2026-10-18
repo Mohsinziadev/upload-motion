@@ -1,0 +1,20 @@
+{
+  "slug": "upload-motion",
+  "url": "https://www.m2toolkit.com/npm-packages/upload-motion",
+  "siteName": "M2Toolkit",
+  "ogImage": "https://www.m2toolkit.com/opengraph-image",
+  "accent": "#7357ff",
+  "title": "Upload Motion",
+  "tagline": "Animated, accessible file uploads for React, on a real upload engine.",
+  "highlights": [
+    "17 motion presets, from a calm file list to a physics-driven hoop shot",
+    "Real byte-level progress, retries, pause, cancel and validation",
+    "Headless hook and a framework-agnostic core for your own UI",
+    "Keyboard, screen readers, reduced motion, zero dependencies"
+  ],
+  "build": {
+    "root": "demo",
+    "viteConfig": "demo/vite.config.ts",
+    "serverEntry": "demo/entry-server.tsx"
+  }
+}

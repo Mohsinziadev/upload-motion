@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "noEmit": true,
+    "paths": {
+      "upload-motion": ["../src/index.ts"],
+      "upload-motion/core": ["../src/core/index.ts"]
+    }
+  },
+  "include": [".", "../src"]
+}

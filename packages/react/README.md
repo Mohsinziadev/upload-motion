@@ -1,5 +1,7 @@
 # upload-motion
 
+**[Live demo and playground →](https://www.m2toolkit.com/npm-packages/upload-motion)**
+
 Animated, accessible file uploads for React: 17 art-directed motion presets on top of a real upload engine with byte-level progress, retries, cancellation and validation.
 
 - **Real uploads.** XHR transport with true progress, speed and ETA. Supports presigned PUTs to S3/R2/GCS, or bring your own handler.
